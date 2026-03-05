@@ -70,9 +70,15 @@ importers:
 
   scripts/eval:
     dependencies:
+      '@prism/server':
+        specifier: workspace:*
+        version: link:../../packages/server
       '@prism/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
     devDependencies:
       '@types/node':
         specifier: ^22.0.0

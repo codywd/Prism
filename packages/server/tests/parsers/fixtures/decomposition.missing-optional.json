@@ -1,0 +1,32 @@
+{
+  "claims": [
+    {
+      "id": "claim_001",
+      "text": "Nuclear energy is the lowest-carbon baseload power source available at scale",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.85,
+      "confidence_rationale": "IPCC and multiple lifecycle analyses confirm very low lifecycle emissions",
+      "depth": 0
+    }
+  ],
+  "edges": [],
+  "evidence": [
+    {
+      "claim_id": "claim_001",
+      "text": "IPCC lifecycle emissions for nuclear: 12g CO2eq/kWh vs 820g for coal",
+      "source_description": "IPCC AR6 Working Group III",
+      "strength": "STRONG",
+      "direction": "SUPPORTS"
+    }
+  ],
+  "perspectives": [
+    {
+      "name": "The Climate Pragmatist",
+      "short_description": "Accepts nuclear as necessary climate tool",
+      "long_description": "Argues that opposition to nuclear energy on safety grounds must be weighed against the certain harms of continued fossil fuel use.",
+      "claim_weights": {
+        "claim_001": 0.9
+      }
+    }
+  ]
+}

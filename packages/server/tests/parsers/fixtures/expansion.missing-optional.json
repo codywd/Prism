@@ -1,0 +1,12 @@
+{
+  "sub_claims": [
+    {
+      "id": "subclaim_001",
+      "text": "Nuclear waste storage remains an unsolved long-term problem",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.8,
+      "confidence_rationale": "No permanent geological repository exists in the US or most countries",
+      "depth": 1
+    }
+  ]
+}

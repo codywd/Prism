@@ -1,0 +1,17 @@
+```json
+{
+  "sub_claims": [
+    {
+      "id": "subclaim_001",
+      "text": "High upfront capital costs are a major barrier to light rail investment",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.9,
+      "confidence_rationale": "Construction cost data is well-documented across projects",
+      "depth": 1
+    }
+  ],
+  "new_evidence": [],
+  "new_edges": [],
+  "new_tensions": []
+}
+```

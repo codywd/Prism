@@ -1,0 +1,17 @@
+```json
+{
+  "overall_balance_score": 0.55,
+  "missing_perspectives": [],
+  "underrepresented_evidence": [],
+  "framing_issues": [],
+  "confidence_adjustments": [],
+  "type_corrections": [
+    {
+      "claim_id": "claim_003",
+      "current_type": "EMPIRICAL",
+      "suggested_type": "VALUE",
+      "rationale": "This claim is a normative statement about priorities, not an empirical assertion"
+    }
+  ]
+}
+```

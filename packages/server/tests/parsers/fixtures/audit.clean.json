@@ -1,0 +1,32 @@
+{
+  "overall_balance_score": 0.72,
+  "missing_perspectives": [
+    {
+      "name": "The Religious / Traditional Values Perspective",
+      "description": "Families who choose homeschooling for religious or values-based reasons",
+      "why_missing_matters": "This is the most common stated reason for homeschooling in surveys and is absent from the current graph"
+    }
+  ],
+  "underrepresented_evidence": [
+    {
+      "claim_id": "claim_002",
+      "gap": "No evidence presented for homeschooled students who do develop strong social skills",
+      "suggested_evidence": "Research on homeschool co-ops and extracurricular participation rates"
+    }
+  ],
+  "framing_issues": [
+    {
+      "description": "The graph frames this as a binary choice rather than a spectrum of hybrid approaches",
+      "suggested_reframe": "Consider adding claims about hybrid/micro-school models"
+    }
+  ],
+  "confidence_adjustments": [
+    {
+      "claim_id": "claim_001",
+      "current": 0.9,
+      "suggested": 0.75,
+      "rationale": "The research base on homeschooling outcomes has significant selection bias issues"
+    }
+  ],
+  "type_corrections": []
+}

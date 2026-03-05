@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "evaluate": "tsx src/index.ts"
+    "evaluate": "tsx src/evaluate.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@prism/shared": "workspace:*"
+    "@prism/server": "workspace:*",
+    "@prism/shared": "workspace:*",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

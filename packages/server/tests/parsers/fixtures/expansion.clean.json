@@ -1,0 +1,45 @@
+{
+  "sub_claims": [
+    {
+      "id": "subclaim_001",
+      "text": "Homeschooling parents can adjust lesson pacing based on daily assessment",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.85,
+      "confidence_rationale": "This is a structural feature of homeschooling, not disputed",
+      "depth": 1
+    },
+    {
+      "id": "subclaim_002",
+      "text": "Most public school teachers cannot meaningfully differentiate for each student given class sizes",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.7,
+      "confidence_rationale": "Research on teacher workload and differentiation limitations is consistent",
+      "depth": 1
+    }
+  ],
+  "new_evidence": [
+    {
+      "claim_id": "subclaim_001",
+      "text": "Homeschool families report average 2-3 hours of formal instruction vs 6+ in school",
+      "source_description": "NHERI survey data",
+      "source_url": null,
+      "strength": "MODERATE",
+      "direction": "SUPPORTS"
+    }
+  ],
+  "new_edges": [
+    {
+      "source": "subclaim_001",
+      "target": "claim_001",
+      "relationship": "STRENGTHENED_BY",
+      "weight": 0.8
+    },
+    {
+      "source": "subclaim_002",
+      "target": "claim_001",
+      "relationship": "STRENGTHENED_BY",
+      "weight": 0.6
+    }
+  ],
+  "new_tensions": []
+}

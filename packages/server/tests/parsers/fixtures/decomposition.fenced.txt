@@ -1,0 +1,34 @@
+```json
+{
+  "claims": [
+    {
+      "id": "claim_001",
+      "text": "Light rail reduces traffic congestion",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.6,
+      "confidence_rationale": "Evidence varies by city and implementation",
+      "depth": 0
+    }
+  ],
+  "edges": [],
+  "evidence": [
+    {
+      "claim_id": "claim_001",
+      "text": "Cities with light rail show 5-15% reduction in peak hour car trips",
+      "source_description": "Transit Research Board 2022",
+      "strength": "MODERATE",
+      "direction": "SUPPORTS"
+    }
+  ],
+  "perspectives": [
+    {
+      "name": "The Urbanist",
+      "short_description": "Favors dense transit networks",
+      "long_description": "Believes investment in public transit is essential for sustainable urban growth.",
+      "claim_weights": {
+        "claim_001": 0.85
+      }
+    }
+  ]
+}
+```

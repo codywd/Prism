@@ -1,0 +1,92 @@
+{
+  "claims": [
+    {
+      "id": "claim_001",
+      "text": "Homeschooling allows customized pacing and curriculum",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.9,
+      "confidence_rationale": "Well-supported by educational research",
+      "depth": 0
+    },
+    {
+      "id": "claim_002",
+      "text": "Public schools provide socialization opportunities that are hard to replicate",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.65,
+      "confidence_rationale": "Evidence is mixed; depends heavily on homeschool approach",
+      "depth": 0
+    },
+    {
+      "id": "claim_003",
+      "text": "A child's educational needs should be the primary driver",
+      "claim_type": "VALUE",
+      "confidence": 0.8,
+      "confidence_rationale": "Value claim, not empirically testable",
+      "depth": 0
+    }
+  ],
+  "edges": [
+    {
+      "source": "claim_001",
+      "target": "claim_003",
+      "relationship": "STRENGTHENED_BY",
+      "weight": 0.7
+    }
+  ],
+  "evidence": [
+    {
+      "claim_id": "claim_001",
+      "text": "Multiple studies show homeschooled students achieve at or above grade level",
+      "source_description": "NHERI research summary 2023",
+      "source_url": null,
+      "strength": "MODERATE",
+      "direction": "SUPPORTS"
+    },
+    {
+      "claim_id": "claim_002",
+      "text": "Homeschooled students report fewer peer interactions on average",
+      "source_description": "Socialization studies meta-analysis",
+      "source_url": null,
+      "strength": "WEAK",
+      "direction": "SUPPORTS"
+    }
+  ],
+  "perspectives": [
+    {
+      "name": "The Individualized Learning Advocate",
+      "short_description": "Prioritizes customization and child autonomy",
+      "long_description": "Believes each child learns differently and that rigid school structures harm many students who would thrive with personalized pacing.",
+      "claim_weights": {
+        "claim_001": 0.9,
+        "claim_002": 0.3,
+        "claim_003": 0.8
+      }
+    },
+    {
+      "name": "The Social Development Prioritizer",
+      "short_description": "Prioritizes peer interaction and collaborative skills",
+      "long_description": "Believes that social development is inseparable from education and that schools provide irreplaceable peer learning environments.",
+      "claim_weights": {
+        "claim_001": 0.4,
+        "claim_002": 0.9,
+        "claim_003": 0.7
+      }
+    }
+  ],
+  "value_dimensions": [
+    {
+      "name": "Academic Customization",
+      "description": "How much weight to place on tailored instruction vs standardized curriculum",
+      "low_label": "Standardization matters more",
+      "high_label": "Customization matters more"
+    }
+  ],
+  "tensions": [
+    {
+      "text": "Individualized Learning vs Social Development advocates weigh socialization evidence differently",
+      "tension_type": "VALUE",
+      "involved_perspectives": ["The Individualized Learning Advocate", "The Social Development Prioritizer"],
+      "involved_claims": ["claim_001", "claim_002"]
+    }
+  ]
+}

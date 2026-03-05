@@ -1,0 +1,36 @@
+Sure! Here is the decomposition of your question as requested:
+
+{
+  "claims": [
+    {
+      "id": "claim_001",
+      "text": "Remote work increases individual productivity for focused tasks",
+      "claim_type": "EMPIRICAL",
+      "confidence": 0.65,
+      "confidence_rationale": "Studies show mixed results depending on role type",
+      "depth": 0
+    }
+  ],
+  "edges": [],
+  "evidence": [
+    {
+      "claim_id": "claim_001",
+      "text": "Stanford study found 13% productivity increase for remote call center workers",
+      "source_description": "Bloom et al., Stanford 2015",
+      "strength": "MODERATE",
+      "direction": "SUPPORTS"
+    }
+  ],
+  "perspectives": [
+    {
+      "name": "The Productivity Maximizer",
+      "short_description": "Focuses on measurable output",
+      "long_description": "Believes remote work should be evaluated purely on productivity metrics and that colocation is a legacy assumption.",
+      "claim_weights": {
+        "claim_001": 0.9
+      }
+    }
+  ]
+}
+
+I hope that helps!
