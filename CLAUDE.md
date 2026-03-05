@@ -6,7 +6,7 @@ Prism is a collaborative sense-making platform that decomposes complex questions
 
 Read `PRISM_SPEC.md` for the full specification. That document is authoritative. If this file and the spec conflict, the spec wins.
 
-**Currently building Phase 1.** Start with `docs/PHASE1_TASKS.md` for the ordered task checklist and dependency graph.
+**Currently building Phase 2.** Start with `docs/PHASE2_TASKS.md` for the ordered task checklist and dependency graph. Phase 1 (The Engine) is complete -- see `docs/PROMPT_LOG.md` for baseline scores.
 
 ## Project Structure
 
@@ -64,7 +64,8 @@ prism/
 ├── scripts/                     # Dev tooling, seed data, evaluation scripts
 │   └── eval/                    # Decomposition quality evaluation harness
 ├── docs/
-│   ├── PHASE1_TASKS.md          # Ordered task checklist for Phase 1
+│   ├── PHASE1_TASKS.md          # Phase 1 task checklist (COMPLETE)
+│   ├── PHASE2_TASKS.md          # Ordered task checklist for Phase 2
 │   ├── EVAL_RUBRIC.md           # Test questions + scoring rubric
 │   ├── PROMPT_LOG.md            # Prompt iteration history with scores
 │   └── adr/                     # Architecture Decision Records (ADR-001 through ADR-009)
@@ -202,8 +203,6 @@ Neo4j stores the claim graph (nodes, edges, perspectives, tensions). PostgreSQL 
 
 The AI client supports two backends, selected by `AI_PROVIDER` in `.env`. See ADR-009 for full rationale.
 
-**Mixed-provider mode:** `AI_DECOMPOSE_PROVIDER` and `AI_AUDIT_PROVIDER` override `AI_PROVIDER` per role. `AI_AUDIT_PROVIDER` applies to both audit and expand. This enables running decomposition against Anthropic Opus and audit/expand against a cheaper OpenAI-compatible endpoint (e.g. Alter Sonnet).
-
 ### Architecture
 
 ```
@@ -230,14 +229,14 @@ interface AIClient {
 }
 ```
 
-Both `anthropicClient.ts` and `openaiClient.ts` implement this interface. The factory in `client.ts` calls `resolveProvider(role)` which checks `AI_DECOMPOSE_PROVIDER` / `AI_AUDIT_PROVIDER` before falling back to `AI_PROVIDER`, then instantiates the correct client. All downstream services depend on the interface, never on a concrete client.
+Both `anthropicClient.ts` and `openaiClient.ts` implement this interface. The factory in `client.ts` reads `AI_PROVIDER` and returns the correct implementation. All downstream services (decomposer, auditor, expander) depend on the interface, never on a concrete client.
 
 ### Provider Differences to Handle
 
 | Concern | Anthropic | LM Studio / OpenAI-compatible |
 |---|---|---|
 | SDK | `@anthropic-ai/sdk` | `openai` (npm package) |
-| Model selection | Per-role (Opus for decompose, Sonnet for expand/audit) | Per-role via `OPENAI_COMPATIBLE_DECOMPOSE/AUDIT/EXPAND_MODEL`; all fall back to `OPENAI_COMPATIBLE_MODEL` |
+| Model selection | Per-role (Opus for decompose, Sonnet for expand/audit) | Single model (`OPENAI_COMPATIBLE_MODEL`), used for all roles |
 | JSON compliance | Generally strong with explicit instructions | Varies by model. Expect more markdown fencing, occasional preamble, and field omissions. |
 | Structured output | Reliable with clear schema instructions | Less reliable. The parser layer must be more forgiving. |
 | Max tokens | Model-dependent, handled by SDK | Must be set explicitly. Default to 4096 for local. |
@@ -306,9 +305,9 @@ Definition of done for Phase 1: 8 of 10 test questions score >= 4.0 average acro
 
 Development follows four phases defined in PRISM_SPEC.md Section 7. Each phase has a clear scope and definition of done. Do not scope-creep across phases.
 
-**Phase 1 - The Engine:** CLI/minimal web form. Decomposition + audit + expansion pipelines. No graph UI. Quality evaluation harness. No database (JSON files). The only goal is getting AI output quality right. **See `docs/PHASE1_TASKS.md` for the ordered task checklist and dependency graph.**
+**Phase 1 - The Engine: COMPLETE.** Baseline scores: 10/10 questions at 4.0+, overall average 4.52. Mixed-mode provider (Opus decompose, Sonnet audit/expand via Alter) is the production configuration. See `docs/PROMPT_LOG.md`.
 
-**Phase 2 - The Map:** React app with D3 graph visualization. Click-to-expand. Detail panel. Neo4j + PostgreSQL integration. Clerk auth. The goal is a working end-to-end flow.
+**Phase 2 - The Map:** React app with D3 graph visualization. Click-to-expand. Detail panel. Fastify API server. Neo4j + PostgreSQL integration. Clerk auth. UI-first sequencing: Tasks 1-9 (Phase 2a) get the visualization working against the live pipeline before Tasks 10-13 (Phase 2b) add persistence and auth. **See `docs/PHASE2_TASKS.md` for the ordered task checklist and dependency graph.**
 
 **Phase 3 - Perspectives and Reweighting:** Sidebar with perspective toggles and value sliders. Client-side reweighting with animated transitions. Tension detection and display. Outline view for accessibility. Summary page. This is where Prism becomes Prism.
 
@@ -319,8 +318,6 @@ Development follows four phases defined in PRISM_SPEC.md Section 7. Each phase h
 ```
 # AI Provider ("anthropic" or "openai-compatible")
 AI_PROVIDER=openai-compatible    # Default to local for dev. Use "anthropic" for eval runs.
-AI_DECOMPOSE_PROVIDER=           # Optional — overrides AI_PROVIDER for decompose role
-AI_AUDIT_PROVIDER=               # Optional — overrides AI_PROVIDER for audit + expand roles
 
 # Anthropic (when AI_PROVIDER=anthropic)
 ANTHROPIC_API_KEY=               # Claude API key
@@ -328,15 +325,12 @@ ANTHROPIC_API_KEY=               # Claude API key
 # OpenAI-compatible / LM Studio (when AI_PROVIDER=openai-compatible)
 OPENAI_COMPATIBLE_BASE_URL=http://localhost:1234/v1
 OPENAI_COMPATIBLE_API_KEY=lm-studio
-OPENAI_COMPATIBLE_MODEL=         # Fallback model used for all roles unless overridden below
-OPENAI_COMPATIBLE_DECOMPOSE_MODEL= # Optional — overrides OPENAI_COMPATIBLE_MODEL for decompose role
-OPENAI_COMPATIBLE_AUDIT_MODEL=   # Optional — overrides OPENAI_COMPATIBLE_MODEL for audit role
-OPENAI_COMPATIBLE_EXPAND_MODEL=  # Optional — overrides OPENAI_COMPATIBLE_MODEL for expand role
+OPENAI_COMPATIBLE_MODEL=         # Model identifier from LM Studio
 
 # Model overrides (Anthropic only)
 AI_DECOMPOSE_MODEL=claude-opus-4-6
-AI_EXPAND_MODEL=claude-sonnet-4-6
-AI_AUDIT_MODEL=claude-sonnet-4-6
+AI_EXPAND_MODEL=claude-sonnet-4-20250514
+AI_AUDIT_MODEL=claude-sonnet-4-20250514
 
 # Temperature (both providers)
 AI_TEMPERATURE_DECOMPOSE=0.3

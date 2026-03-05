@@ -8,9 +8,11 @@ The goal is not to give answers. The goal is to help people think better.
 
 ## Project Status
 
-**Phase 1: The Engine** -- Building and validating the AI decomposition pipeline.
+**Phase 1: The Engine** -- COMPLETE. AI decomposition pipeline validated. 10/10 eval questions scored 4.0+ (avg 4.52). See `docs/PROMPT_LOG.md`.
 
-See `docs/PHASE1_TASKS.md` for the current task breakdown.
+**Phase 2: The Map** -- Building the interactive graph visualization and API server.
+
+See `docs/PHASE2_TASKS.md` for the current task breakdown.
 
 ## Key Documents
 
@@ -18,7 +20,8 @@ See `docs/PHASE1_TASKS.md` for the current task breakdown.
 |---|---|
 | `PRISM_SPEC.md` | Authoritative specification. If anything conflicts, the spec wins. |
 | `CLAUDE.md` | Development conventions, architecture rules, and pitfalls for Claude Code. |
-| `docs/PHASE1_TASKS.md` | Ordered task checklist for Phase 1 implementation. |
+| `docs/PHASE2_TASKS.md` | Ordered task checklist for Phase 2 (current phase). |
+| `docs/PHASE1_TASKS.md` | Phase 1 task checklist (complete). |
 | `docs/EVAL_RUBRIC.md` | Test questions and scoring rubric for decomposition quality. |
 | `docs/PROMPT_LOG.md` | Tracks prompt iterations and their effect on quality scores. |
 | `docs/adr/` | Architecture Decision Records explaining why key decisions were made. |
