@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+coverage/
+playwright-report/
+test-results/
+
+# Phase 1 evaluation outputs
+scripts/eval/output/
+
+# Neo4j local data (use Docker volumes instead)
+data/
+
+# TypeScript
+*.tsbuildinfo
