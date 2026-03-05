@@ -3,6 +3,7 @@ import { type ExpansionResponse } from '@prism/shared';
 import { createAIClient } from './client.js';
 import { loadPrompt } from '../../prompts/promptLoader.js';
 import { parseExpansionResponse } from '../../parsers/expansionParser.js';
+import { sanitizeUserInput } from '../../utils/sanitize.js';
 import type { RawClaim, ClaimContext } from '../../types/index.js';
 
 export async function expand(claim: RawClaim, context: ClaimContext): Promise<ExpansionResponse> {
@@ -19,8 +20,8 @@ export async function expand(claim: RawClaim, context: ClaimContext): Promise<Ex
     .join('\n') || 'None';
 
   const systemPrompt = await loadPrompt('expand', {
-    question_text: context.questionText,
-    claim_text: claim.text,
+    question_text: sanitizeUserInput(context.questionText),
+    claim_text: sanitizeUserInput(claim.text),
     claim_type: claim.claim_type,
     parent_claims: parentClaimsText,
     existing_evidence: existingEvidence,

@@ -60,13 +60,25 @@ export class OpenAICompatibleClient implements AIClient {
         throw new Error('No choices in response');
       }
 
+      // Detect truncation before attempting to parse — gives a clear error
+      // instead of a cryptic JSON parse failure.
+      if (choice.finish_reason === 'length') {
+        const tokenLimit = params.maxTokens ?? DEFAULT_MAX_TOKENS;
+        throw new Error(
+          `Response truncated at token limit (${tokenLimit}). ` +
+          `Try increasing maxTokens or reducing prompt size. ` +
+          `Partial response (${(choice.message.content ?? '').length} chars): ` +
+          `${(choice.message.content ?? '').slice(0, 200)}...`,
+        );
+      }
+
       const text = choice.message.content;
       if (!text) {
         throw new Error('Empty message content in response');
       }
 
       console.log(
-        `[openai-compatible] model=${this.model} responseLength=${text.length}`,
+        `[openai-compatible] model=${this.model} responseLength=${text.length} finish_reason=${choice.finish_reason ?? 'unknown'}`,
       );
       return text;
     } catch (error) {

@@ -2,14 +2,22 @@ import { randomUUID } from 'crypto';
 
 /**
  * Strips markdown fencing (```json ... ``` or ``` ... ```) from AI responses.
+ * Handles fencing at the start of the string and after preamble text.
  * Many models add fencing despite instructions not to.
  */
 export function stripMarkdownFencing(text: string): string {
-  const fenced = text.match(/^```(?:json)?\r?\n?([\s\S]*?)\r?\n?```\s*$/);
-  if (fenced && fenced[1] !== undefined) {
-    return fenced[1].trim();
+  const trimmed = text.trim();
+  // Case 1: entire string is fenced (most common)
+  const fullFence = trimmed.match(/^```(?:json)?\r?\n?([\s\S]*?)\r?\n?```\s*$/);
+  if (fullFence && fullFence[1] !== undefined) {
+    return fullFence[1].trim();
   }
-  return text.trim();
+  // Case 2: fencing appears after preamble text, e.g. "Here you go:\n```json\n{...}\n```"
+  const inlineFence = trimmed.match(/```(?:json)?\r?\n?([\s\S]*?)\r?\n?```/);
+  if (inlineFence && inlineFence[1] !== undefined) {
+    return inlineFence[1].trim();
+  }
+  return trimmed;
 }
 
 /**

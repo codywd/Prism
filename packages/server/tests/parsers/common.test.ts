@@ -26,6 +26,11 @@ describe('stripMarkdownFencing', () => {
     const input = '```json\n  {"key": "value"}  \n```';
     expect(stripMarkdownFencing(input)).toBe('{"key": "value"}');
   });
+
+  it('strips fencing that appears after preamble text', () => {
+    const input = 'Here is the JSON:\n```json\n{"key": "value"}\n```';
+    expect(stripMarkdownFencing(input)).toBe('{"key": "value"}');
+  });
 });
 
 describe('extractJsonSubstring', () => {
