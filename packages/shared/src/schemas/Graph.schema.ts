@@ -4,12 +4,20 @@ import { EvidenceStrength, EvidenceDirection } from '../types/EvidenceNode.js';
 import { TensionType } from '../types/TensionNode.js';
 import { RelationshipType } from '../types/Edge.js';
 
+// .catch() fallbacks handle local models that occasionally use the wrong enum value
+// (e.g., mixing up claim_type and tension_type names). Anthropic models won't need this.
+const claimTypeCoerced = z.nativeEnum(ClaimType).catch(ClaimType.EMPIRICAL);
+const tensionTypeCoerced = z.nativeEnum(TensionType).catch(TensionType.FACTUAL);
+const evidenceStrengthCoerced = z.nativeEnum(EvidenceStrength).catch(EvidenceStrength.MODERATE);
+const evidenceDirectionCoerced = z.nativeEnum(EvidenceDirection).catch(EvidenceDirection.SUPPORTS);
+const relationshipTypeCoerced = z.nativeEnum(RelationshipType).catch(RelationshipType.REQUIRES);
+
 // What the AI returns (before server post-processing)
 export const DecompositionResponseSchema = z.object({
   claims: z.array(z.object({
     id: z.string(),
     text: z.string().min(1),
-    claim_type: z.nativeEnum(ClaimType),
+    claim_type: claimTypeCoerced,
     confidence: z.number().min(0).max(1),
     confidence_rationale: z.string(),
     depth: z.number().int().min(0).default(0),
@@ -17,7 +25,7 @@ export const DecompositionResponseSchema = z.object({
   edges: z.array(z.object({
     source: z.string(), // placeholder ID
     target: z.string(), // placeholder ID
-    relationship: z.nativeEnum(RelationshipType),
+    relationship: relationshipTypeCoerced,
     weight: z.number().min(0).max(1).default(0.5),
   })),
   evidence: z.array(z.object({
@@ -25,8 +33,8 @@ export const DecompositionResponseSchema = z.object({
     text: z.string().min(1),
     source_description: z.string(),
     source_url: z.string().nullable().optional(),
-    strength: z.nativeEnum(EvidenceStrength),
-    direction: z.nativeEnum(EvidenceDirection),
+    strength: evidenceStrengthCoerced,
+    direction: evidenceDirectionCoerced,
   })),
   perspectives: z.array(z.object({
     name: z.string().min(1),
@@ -42,7 +50,7 @@ export const DecompositionResponseSchema = z.object({
   })).optional().default([]),
   tensions: z.array(z.object({
     text: z.string().min(1),
-    tension_type: z.nativeEnum(TensionType),
+    tension_type: tensionTypeCoerced,
     involved_perspectives: z.array(z.string()),
     involved_claims: z.array(z.string()),
   })).optional().default([]),
@@ -86,7 +94,7 @@ export const ExpansionResponseSchema = z.object({
   sub_claims: z.array(z.object({
     id: z.string(),
     text: z.string().min(1),
-    claim_type: z.nativeEnum(ClaimType),
+    claim_type: claimTypeCoerced,
     confidence: z.number().min(0).max(1),
     confidence_rationale: z.string(),
     depth: z.number().int().min(0),
@@ -96,18 +104,18 @@ export const ExpansionResponseSchema = z.object({
     text: z.string().min(1),
     source_description: z.string(),
     source_url: z.string().nullable().optional(),
-    strength: z.nativeEnum(EvidenceStrength),
-    direction: z.nativeEnum(EvidenceDirection),
+    strength: evidenceStrengthCoerced,
+    direction: evidenceDirectionCoerced,
   })).default([]),
   new_edges: z.array(z.object({
     source: z.string(),
     target: z.string(),
-    relationship: z.nativeEnum(RelationshipType),
+    relationship: relationshipTypeCoerced,
     weight: z.number().min(0).max(1).default(0.5),
   })).default([]),
   new_tensions: z.array(z.object({
     text: z.string().min(1),
-    tension_type: z.nativeEnum(TensionType),
+    tension_type: tensionTypeCoerced,
     involved_perspectives: z.array(z.string()),
     involved_claims: z.array(z.string()),
   })).default([]),

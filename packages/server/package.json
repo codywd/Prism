@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "clean": "rm -rf dist",
-    "run:question": "tsx src/cli.ts"
+    "run:question": "tsx --env-file=../../.env src/cli.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",

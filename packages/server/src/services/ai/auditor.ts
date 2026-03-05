@@ -17,6 +17,6 @@ export async function audit(
   const systemPrompt = await loadPrompt('audit', { graph_json: graphJson });
   const userPrompt = 'Respond with JSON only as specified above.';
 
-  const raw = await client.complete({ systemPrompt, userPrompt, temperature });
+  const raw = await client.complete({ systemPrompt, userPrompt, temperature, maxTokens: 8192 });
   return parseAuditResponse(raw, idMap);
 }

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "evaluate": "tsx src/evaluate.ts",
+    "evaluate": "tsx --env-file=../../.env src/evaluate.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

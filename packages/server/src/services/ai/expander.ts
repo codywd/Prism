@@ -29,6 +29,6 @@ export async function expand(claim: RawClaim, context: ClaimContext): Promise<Ex
   });
   const userPrompt = 'Respond with JSON only as specified above.';
 
-  const raw = await client.complete({ systemPrompt, userPrompt, temperature });
+  const raw = await client.complete({ systemPrompt, userPrompt, temperature, maxTokens: 4096 });
   return parseExpansionResponse(raw);
 }

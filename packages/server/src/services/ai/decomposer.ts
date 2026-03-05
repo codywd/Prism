@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { type DecompositionResponse } from '@prism/shared';
 import { createAIClient } from './client.js';
 import { loadPrompt } from '../../prompts/promptLoader.js';
@@ -18,7 +17,7 @@ export async function decompose(question: string): Promise<DecomposeResult> {
   const systemPrompt = await loadPrompt('decompose', { question_text: safeQuestion });
   const userPrompt = 'Respond with JSON only as specified above.';
 
-  const raw = await client.complete({ systemPrompt, userPrompt, temperature });
+  const raw = await client.complete({ systemPrompt, userPrompt, temperature, maxTokens: 8192 });
   const { data, idMap } = parseDecompositionResponse(raw);
   return { graph: data, idMap };
 }
