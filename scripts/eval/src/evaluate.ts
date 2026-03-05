@@ -31,6 +31,14 @@ async function main(): Promise<void> {
   }
 
   const provider = process.env['AI_PROVIDER'] ?? 'openai-compatible';
+  const decomposeProvider = process.env['AI_DECOMPOSE_PROVIDER'] ?? provider;
+  const auditProvider = process.env['AI_AUDIT_PROVIDER'] ?? provider;
+  const providerLabel = decomposeProvider === auditProvider
+    ? decomposeProvider
+    : `${decomposeProvider}/${auditProvider}`;
+  // Scores count toward Phase 1 pass/fail when decompose uses Anthropic —
+  // that's the quality-critical pass. Audit/expand provider doesn't affect scoring validity.
+  const scoresCount = decomposeProvider === 'anthropic';
 
   // Dynamic import after setting env
   const { orchestrate } = await import('@prism/server');
@@ -48,9 +56,9 @@ async function main(): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 
   console.log(`\n=== PRISM EVALUATION HARNESS ===`);
-  console.log(`Provider: ${provider}`);
-  if (provider !== 'anthropic') {
-    console.log(`WARNING: Scores from non-Anthropic providers do not count toward Phase 1 pass/fail.`);
+  console.log(`Provider: ${providerLabel}`);
+  if (!scoresCount) {
+    console.log(`WARNING: Scores from non-Anthropic decomposition do not count toward Phase 1 pass/fail.`);
   }
   console.log(`Questions: ${questionsToRun.length}`);
   console.log(`Output dir: ${OUTPUT_DIR}\n`);
@@ -109,7 +117,7 @@ async function main(): Promise<void> {
   // Generate scoring template
   const date = new Date().toISOString().slice(0, 10);
   const promptVersion = '0.1';
-  const scoringTemplate = generateScoringTemplate(questionsToRun, outputPaths, provider, promptVersion, date);
+  const scoringTemplate = generateScoringTemplate(questionsToRun, outputPaths, providerLabel, promptVersion, date);
   const scoringPath = join(OUTPUT_DIR, `scores_${timestamp}.md`);
   writeFileSync(scoringPath, scoringTemplate, 'utf-8');
 
@@ -128,8 +136,8 @@ async function main(): Promise<void> {
   }
   console.log(`Total time: ${(totalMs / 1000).toFixed(1)}s`);
   console.log(`Scoring template: ${scoringPath}`);
-  if (provider !== 'anthropic') {
-    console.log(`\nNOTE: Run with --provider anthropic for scores that count toward Phase 1 pass/fail.`);
+  if (!scoresCount) {
+    console.log(`\nNOTE: Set AI_DECOMPOSE_PROVIDER=anthropic for scores that count toward Phase 1 pass/fail.`);
   }
 }
 
