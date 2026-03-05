@@ -3,6 +3,7 @@ import { type DecompositionResponse, type AuditResponse } from '@prism/shared';
 import { decompose } from './decomposer.js';
 import { audit } from './auditor.js';
 import { expand } from './expander.js';
+import { resolveProvider } from './client.js';
 
 export interface OrchestrateResult {
   graph: DecompositionResponse;
@@ -15,14 +16,20 @@ export interface OrchestrateResult {
     remediationMs: number;
     totalMs: number;
   };
+  /** e.g. "anthropic" or "anthropic/openai-compatible" in mixed-provider mode */
   provider: string;
 }
 
 export async function orchestrate(question: string): Promise<OrchestrateResult> {
-  const provider = process.env['AI_PROVIDER'] ?? 'openai-compatible';
+  const decomposeProvider = resolveProvider('decompose');
+  const auditProvider = resolveProvider('audit');
+  const providerLabel = decomposeProvider === auditProvider
+    ? decomposeProvider
+    : `${decomposeProvider}/${auditProvider}`;
+
   const startTotal = Date.now();
 
-  console.log(`[orchestrator] starting decomposition — provider=${provider}`);
+  console.log(`[orchestrator] starting decomposition — provider=${providerLabel}`);
 
   // Step 1: Decompose
   const startDecompose = Date.now();
@@ -96,6 +103,6 @@ export async function orchestrate(question: string): Promise<OrchestrateResult> 
     auditResult,
     auditSkipped,
     timings: { decomposeMs, auditMs: Date.now() - startAudit - remediationMs, remediationMs, totalMs },
-    provider,
+    provider: providerLabel,
   };
 }

@@ -202,6 +202,8 @@ Neo4j stores the claim graph (nodes, edges, perspectives, tensions). PostgreSQL 
 
 The AI client supports two backends, selected by `AI_PROVIDER` in `.env`. See ADR-009 for full rationale.
 
+**Mixed-provider mode:** `AI_DECOMPOSE_PROVIDER` and `AI_AUDIT_PROVIDER` override `AI_PROVIDER` per role. `AI_AUDIT_PROVIDER` applies to both audit and expand. This enables running decomposition against Anthropic Opus and audit/expand against a cheaper OpenAI-compatible endpoint (e.g. Alter Sonnet).
+
 ### Architecture
 
 ```
@@ -228,7 +230,7 @@ interface AIClient {
 }
 ```
 
-Both `anthropicClient.ts` and `openaiClient.ts` implement this interface. The factory in `client.ts` reads `AI_PROVIDER` and returns the correct implementation. All downstream services (decomposer, auditor, expander) depend on the interface, never on a concrete client.
+Both `anthropicClient.ts` and `openaiClient.ts` implement this interface. The factory in `client.ts` calls `resolveProvider(role)` which checks `AI_DECOMPOSE_PROVIDER` / `AI_AUDIT_PROVIDER` before falling back to `AI_PROVIDER`, then instantiates the correct client. All downstream services depend on the interface, never on a concrete client.
 
 ### Provider Differences to Handle
 
@@ -317,6 +319,8 @@ Development follows four phases defined in PRISM_SPEC.md Section 7. Each phase h
 ```
 # AI Provider ("anthropic" or "openai-compatible")
 AI_PROVIDER=openai-compatible    # Default to local for dev. Use "anthropic" for eval runs.
+AI_DECOMPOSE_PROVIDER=           # Optional — overrides AI_PROVIDER for decompose role
+AI_AUDIT_PROVIDER=               # Optional — overrides AI_PROVIDER for audit + expand roles
 
 # Anthropic (when AI_PROVIDER=anthropic)
 ANTHROPIC_API_KEY=               # Claude API key
