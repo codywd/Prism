@@ -14,5 +14,5 @@ export function createAIClient(role: AIRole = 'decompose'): AIClient {
     return new AnthropicClient(role);
   }
 
-  return new OpenAICompatibleClient();
+  return new OpenAICompatibleClient(role);
 }

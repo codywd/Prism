@@ -235,7 +235,7 @@ Both `anthropicClient.ts` and `openaiClient.ts` implement this interface. The fa
 | Concern | Anthropic | LM Studio / OpenAI-compatible |
 |---|---|---|
 | SDK | `@anthropic-ai/sdk` | `openai` (npm package) |
-| Model selection | Per-role (Opus for decompose, Sonnet for expand/audit) | Single model (`OPENAI_COMPATIBLE_MODEL`), used for all roles |
+| Model selection | Per-role (Opus for decompose, Sonnet for expand/audit) | Per-role via `OPENAI_COMPATIBLE_DECOMPOSE/AUDIT/EXPAND_MODEL`; all fall back to `OPENAI_COMPATIBLE_MODEL` |
 | JSON compliance | Generally strong with explicit instructions | Varies by model. Expect more markdown fencing, occasional preamble, and field omissions. |
 | Structured output | Reliable with clear schema instructions | Less reliable. The parser layer must be more forgiving. |
 | Max tokens | Model-dependent, handled by SDK | Must be set explicitly. Default to 4096 for local. |
@@ -324,12 +324,15 @@ ANTHROPIC_API_KEY=               # Claude API key
 # OpenAI-compatible / LM Studio (when AI_PROVIDER=openai-compatible)
 OPENAI_COMPATIBLE_BASE_URL=http://localhost:1234/v1
 OPENAI_COMPATIBLE_API_KEY=lm-studio
-OPENAI_COMPATIBLE_MODEL=         # Model identifier from LM Studio
+OPENAI_COMPATIBLE_MODEL=         # Fallback model used for all roles unless overridden below
+OPENAI_COMPATIBLE_DECOMPOSE_MODEL= # Optional — overrides OPENAI_COMPATIBLE_MODEL for decompose role
+OPENAI_COMPATIBLE_AUDIT_MODEL=   # Optional — overrides OPENAI_COMPATIBLE_MODEL for audit role
+OPENAI_COMPATIBLE_EXPAND_MODEL=  # Optional — overrides OPENAI_COMPATIBLE_MODEL for expand role
 
 # Model overrides (Anthropic only)
 AI_DECOMPOSE_MODEL=claude-opus-4-6
-AI_EXPAND_MODEL=claude-sonnet-4-20250514
-AI_AUDIT_MODEL=claude-sonnet-4-20250514
+AI_EXPAND_MODEL=claude-sonnet-4-6
+AI_AUDIT_MODEL=claude-sonnet-4-6
 
 # Temperature (both providers)
 AI_TEMPERATURE_DECOMPOSE=0.3

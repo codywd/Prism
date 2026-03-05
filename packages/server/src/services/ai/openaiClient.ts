@@ -1,8 +1,20 @@
 import OpenAI from 'openai';
-import type { AIClient } from './types.js';
+import type { AIClient, AIRole } from './types.js';
 
 const RETRY_DELAY_MS = 1000;
 const DEFAULT_MAX_TOKENS = 4096;
+
+function getModel(role: AIRole): string {
+  const base = process.env['OPENAI_COMPATIBLE_MODEL'];
+  switch (role) {
+    case 'decompose':
+      return process.env['OPENAI_COMPATIBLE_DECOMPOSE_MODEL'] ?? base ?? '';
+    case 'audit':
+      return process.env['OPENAI_COMPATIBLE_AUDIT_MODEL'] ?? base ?? '';
+    case 'expand':
+      return process.env['OPENAI_COMPATIBLE_EXPAND_MODEL'] ?? base ?? '';
+  }
+}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,19 +22,19 @@ function sleep(ms: number): Promise<void> {
 
 export class OpenAICompatibleClient implements AIClient {
   private readonly openai: OpenAI;
-  private readonly model: string;
+  private readonly role: AIRole;
 
-  constructor() {
+  constructor(role: AIRole = 'decompose') {
     const baseURL =
       process.env['OPENAI_COMPATIBLE_BASE_URL'] ?? 'http://localhost:1234/v1';
     const apiKey = process.env['OPENAI_COMPATIBLE_API_KEY'] ?? 'lm-studio';
-    const model = process.env['OPENAI_COMPATIBLE_MODEL'];
+    const model = getModel(role);
     if (!model) {
       throw new Error(
-        'OPENAI_COMPATIBLE_MODEL environment variable is required',
+        'OPENAI_COMPATIBLE_MODEL (or a role-specific override) environment variable is required',
       );
     }
-    this.model = model;
+    this.role = role;
     this.openai = new OpenAI({ baseURL, apiKey });
   }
 
@@ -44,9 +56,10 @@ export class OpenAICompatibleClient implements AIClient {
     },
     attemptNumber: number,
   ): Promise<string> {
+    const model = getModel(this.role);
     try {
       const response = await this.openai.chat.completions.create({
-        model: this.model,
+        model,
         max_tokens: params.maxTokens ?? DEFAULT_MAX_TOKENS,
         temperature: params.temperature,
         messages: [
@@ -78,20 +91,20 @@ export class OpenAICompatibleClient implements AIClient {
       }
 
       console.log(
-        `[openai-compatible] model=${this.model} responseLength=${text.length} finish_reason=${choice.finish_reason ?? 'unknown'}`,
+        `[openai-compatible] model=${model} role=${this.role} responseLength=${text.length} finish_reason=${choice.finish_reason ?? 'unknown'}`,
       );
       return text;
     } catch (error) {
       if (attemptNumber === 0) {
         console.warn(
-          `[openai-compatible] model=${this.model} attempt 1 failed, retrying in ${RETRY_DELAY_MS}ms`,
+          `[openai-compatible] model=${model} role=${this.role} attempt 1 failed, retrying in ${RETRY_DELAY_MS}ms`,
           error,
         );
         await sleep(RETRY_DELAY_MS);
         return this.attempt(params, 1);
       }
       console.error(
-        `[openai-compatible] model=${this.model} failed after 2 attempts`,
+        `[openai-compatible] model=${model} role=${this.role} failed after 2 attempts`,
       );
       console.error('[openai-compatible] raw error:', error);
       throw error;
